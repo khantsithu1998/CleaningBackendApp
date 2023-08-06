@@ -43,5 +43,8 @@ export class Task extends BaseEntity {
   completedAt : Date;
 
   @Column({ type: "datetime", nullable: false , default: () => 'CURRENT_TIMESTAMP' })
-  schedule_time: Date;
+  start_time: Date;
+
+  @Column({ type: "datetime", nullable: false , default: () => 'CURRENT_TIMESTAMP' })
+  end_time: Date;
 }

@@ -104,8 +104,9 @@ export const getTaskDurationPerWeek = async (req: Request, res: Response) => {
     // Calculate the total duration in hours for the tasks in the week
     let totalDurationInHours = 0;
     for (const task of tasks) {
-      const durationInMilliseconds = task.completedAt.getTime() -
-        task.schedule_time.getTime();
+      const startTime = task.start_time.getTime();
+      const endTime = task.end_time.getTime();
+      const durationInMilliseconds = endTime - startTime;
       totalDurationInHours += durationInMilliseconds / (1000 * 60 * 60); // Convert milliseconds to hours
     }
 
@@ -118,6 +119,7 @@ export const getTaskDurationPerWeek = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to fetch task duration per week." });
   }
 };
+
 
 export const completeTask = async (req: Request, res: Response) => {
   const { task_id } = req.body;
@@ -148,7 +150,7 @@ export const completeTask = async (req: Request, res: Response) => {
 
 
 export const createTask = async (req: Request, res: Response) => {
-  const { user_id, category_id, location, instructions, schedule_time } =
+  const { user_id, category_id, location, instructions, start_time, end_time } =
     req.body;
 
   try {
@@ -165,7 +167,8 @@ export const createTask = async (req: Request, res: Response) => {
     task.category = categoryFound;
     task.location = location;
     task.instructions = instructions;
-    task.schedule_time = schedule_time;
+    task.start_time = start_time;
+    task.end_time = end_time;
     task.is_completed = false;
     task.completedAt = null;
     const createdTask = await AppDataSource.manager.save(task);

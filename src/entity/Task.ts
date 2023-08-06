@@ -35,6 +35,9 @@ export class Task {
   @Column({ default: false })
   is_completed: boolean;
 
+  @Column({ nullable: true, type: "datetime" }) // Make the completedAt field nullable and of type datetime
+  completedAt : Date;
+
   @Column({ type: "datetime", nullable: false , default: () => 'CURRENT_TIMESTAMP' })
   schedule_time: Date;
 }

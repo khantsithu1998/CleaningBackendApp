@@ -1,17 +1,38 @@
 import { AppDataSource } from "./data-source";
 import express from "express";
+import * as AdminJSTypeorm from '@adminjs/typeorm'
 import * as userController from "./controllers/userController";
 import * as categoryController from "./controllers/categoryController";
 import * as taskController from "./controllers/taskController";
+import { User } from "./entity/User";
+import { Task } from "./entity/Task";
+import { Category } from "./entity/Category";
 
-const app = express();
 const port = 3000;
 
-app.use(express.json());
 
 const start = async () => {
   try {
+    const [adminjsModule, adminjsexpressModule] = await Promise.all([
+      import('adminjs'),
+      import('@adminjs/express'),
+    ]);
+    
+    const AdminJS = adminjsModule.default;
+    const AdminJSExpress = adminjsexpressModule.default;
+
+    AdminJS.registerAdapter({
+      Resource: AdminJSTypeorm.Resource,
+      Database: AdminJSTypeorm.Database,
+    })
+
     await AppDataSource.initialize();
+    const adminOptions = {
+     
+      resources: [User, Task, Category],
+    }
+    const app = express();
+    app.use(express.json());
     // User routes
     app.get("/users", userController.getUsers);
 
@@ -23,6 +44,11 @@ const start = async () => {
     app.get("/tasks", taskController.getTasks);
     app.post("/tasks", taskController.createTask);
 
+    const admin = new AdminJS(adminOptions);
+
+    const adminRouter = AdminJSExpress.buildRouter(admin);
+    app.use(admin.options.rootPath, adminRouter);
+   
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
     });

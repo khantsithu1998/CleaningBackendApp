@@ -1,6 +1,7 @@
 // src/entity/Task.ts
 
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -10,8 +11,8 @@ import {
 import { Category } from "./Category";
 import { User } from "./User";
 
-@Entity()
-export class Task {
+@Entity({ name : "tasks"})
+export class Task extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -29,10 +30,10 @@ export class Task {
   @Column({ default: "" })
   description: string;
 
-  @Column("text", { array: true, nullable: true })
-  photo: string[];
+  @Column({ default: "" })
+  photo: string;
 
-  @Column("json", { nullable: false })
+  @Column("json", { nullable: true })
   instructions: { instruction_title: string; instruction_photo: string }[];
 
   @Column({ default: false })

@@ -13,7 +13,7 @@ export class User extends BaseEntity {
   lastName: string;
 
   @Column()
-  age: number;
+  profilePhoto: string;
 
   @OneToMany(() => Task, (task) => task.user)
   tasks: Task[];

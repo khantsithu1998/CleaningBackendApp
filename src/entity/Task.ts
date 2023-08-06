@@ -37,14 +37,14 @@ export class Task extends BaseEntity {
   instructions: { instruction_title: string; instruction_photo: string }[];
 
   @Column({ default: false })
-  is_completed: boolean;
+  isCompleted: boolean;
 
   @Column({ nullable: true, type: "datetime" }) // Make the completedAt field nullable and of type datetime
   completedAt : Date;
 
   @Column({ type: "datetime", nullable: false , default: () => 'CURRENT_TIMESTAMP' })
-  start_time: Date;
+  startTime: Date;
 
   @Column({ type: "datetime", nullable: false , default: () => 'CURRENT_TIMESTAMP' })
-  end_time: Date;
+  endTime: Date;
 }

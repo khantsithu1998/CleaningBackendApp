@@ -36,7 +36,7 @@ export const getCompletedTasks = async (req: Request, res: Response) => {
   try {
     const [tasks, total] = await AppDataSource.manager.findAndCount(Task, {
       where: {
-        is_completed: true,
+        isCompleted: true,
       },
       skip,
       take: parseInt(perPage.toString()),
@@ -67,7 +67,7 @@ export const getTaskCompletedPerWeek = async (req: Request, res: Response) => {
     // Find all completed tasks within the specified week
     const tasks = await AppDataSource.manager.find(Task, {
       where: {
-        is_completed: true,
+        isCompleted: true,
         completedAt: Between(startDate, endDate),
       },
       relations: ["category", "user"],
@@ -95,7 +95,7 @@ export const getTaskDurationPerWeek = async (req: Request, res: Response) => {
     // Find all completed tasks within the specified week
     const tasks = await AppDataSource.manager.find(Task, {
       where: {
-        is_completed: true,
+        isCompleted: true,
         completedAt: Between(startDate, endDate),
       },
       relations: ["category", "user"],
@@ -104,8 +104,8 @@ export const getTaskDurationPerWeek = async (req: Request, res: Response) => {
     // Calculate the total duration in hours for the tasks in the week
     let totalDurationInHours = 0;
     for (const task of tasks) {
-      const startTime = task.start_time.getTime();
-      const endTime = task.end_time.getTime();
+      const startTime = task.startTime.getTime();
+      const endTime = task.endTime.getTime();
       const durationInMilliseconds = endTime - startTime;
       totalDurationInHours += durationInMilliseconds / (1000 * 60 * 60); // Convert milliseconds to hours
     }
@@ -132,12 +132,12 @@ export const completeTask = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Task not found." });
     }
 
-    if (task.is_completed) {
+    if (task.isCompleted) {
       return res.status(400).json({ error: "Task is already completed." });
     }
 
     // Mark the task as completed and set the completion time to the current date and time
-    task.is_completed = true;
+    task.isCompleted = true;
     task.completedAt = new Date();
     await taskRepository.save(task);
 
@@ -167,9 +167,9 @@ export const createTask = async (req: Request, res: Response) => {
     task.category = categoryFound;
     task.location = location;
     task.instructions = instructions;
-    task.start_time = start_time;
-    task.end_time = end_time;
-    task.is_completed = false;
+    task.startTime = start_time;
+    task.endTime = end_time;
+    task.isCompleted = false;
     task.completedAt = null;
     const createdTask = await AppDataSource.manager.save(task);
 

@@ -7,6 +7,7 @@ import { Category } from "./entity/Category";
 // Load environment variables from .env file
 require("dotenv").config();
 
+console.log("dbhost : ", process.env.DB_HOST)
 export const AppDataSource = new DataSource({
   type: "mysql",
   host: process.env.DB_HOST,

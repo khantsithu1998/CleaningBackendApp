@@ -1,0 +1,46 @@
+Arguments: 
+  /Users/khantsithu/.nvm/versions/node/v16.16.0/bin/node /opt/homebrew/Cellar/yarn/1.22.19/libexec/bin/yarn.js add @adminjs/express
+
+PATH: 
+  /Users/khantsithu/.rvm/gems/ruby-2.7.6/bin:/Users/khantsithu/.rvm/gems/ruby-2.7.6@global/bin:/Users/khantsithu/.rvm/rubies/ruby-2.7.6/bin:/Users/khantsithu/Library/Application Support/Herd/bin/:/Users/khantsithu/.nvm/versions/node/v16.16.0/bin:/Users/khantsithu/.deta/bin:/Users/khantsithu/.bun/bin:/Users/khantsithu/opt/anaconda3/bin:/Users/khantsithu/.deno/bin:/Library/Frameworks/Python.framework/Versions/3.9/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/khantsithu/flutter/bin:/usr/local/share/dotnet:~/.dotnet/tools:/Library/Apple/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Users/khantsithu/.cargo/bin:/Users/khantsithu/.fig/bin:/Users/khantsithu/.local/bin:/Users/khantsithu/Library/Android/sdk/emulator:/Users/khantsithu/Library/Android/sdk/tools:/Users/khantsithu/Library/Android/sdk/tools/bin:/Users/khantsithu/Library/Android/sdk/platform-tools:/Users/khantsithu/Library/Android/sdk/build-tools/32.0.0:/Users/khantsithu/flutter/bin:/Users/khantsithu/.rvm/bin:/Users/khantsithu/.local/bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  16.16.0
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  Error: ENOSPC: no space left on device, write
+
+npm manifest: 
+  {
+     "name": "CleaningBackendApp",
+     "version": "0.0.1",
+     "description": "Awesome project developed with TypeORM.",
+     "type": "commonjs",
+     "devDependencies": {
+        "@types/node": "^16.11.10",
+        "ts-node": "10.7.0",
+        "typescript": "4.5.2"
+     },
+     "dependencies": {
+        "express": "^4.18.2",
+        "mysql": "^2.14.1",
+        "reflect-metadata": "^0.1.13",
+        "typeorm": "0.3.17"
+     },
+     "scripts": {
+        "start": "ts-node src/index.ts",
+        "typeorm": "typeorm-ts-node-commonjs"
+     }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

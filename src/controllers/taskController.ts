@@ -3,7 +3,7 @@ import { AppDataSource } from "../data-source";
 import { Category } from "../entity/Category";
 import { Task } from "../entity/Task";
 import { User } from "../entity/User";
-import { Between, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
+import { Between } from "typeorm";
 
 const userRepository = AppDataSource.manager.getRepository(User);
 const categoryRepository = AppDataSource.manager.getRepository(Category);
@@ -72,8 +72,7 @@ export const getTasksCompletedByWeek = async (req: Request, res: Response) => {
           startDate,
           endDate,
         ),
-      },
-      relations: ["category", "user"],
+      }
     });
 
     res.status(200).json({ data: tasksCompletedByWeek });

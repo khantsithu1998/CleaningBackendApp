@@ -119,6 +119,34 @@ export const getTaskDurationPerWeek = async (req: Request, res: Response) => {
   }
 };
 
+export const completeTask = async (req: Request, res: Response) => {
+  const { task_id } = req.body;
+
+  try {
+    const taskRepository = AppDataSource.manager.getRepository(Task);
+    const task = await taskRepository.findOneBy({ id: task_id });
+
+    if (!task) {
+      return res.status(404).json({ error: "Task not found." });
+    }
+
+    if (task.is_completed) {
+      return res.status(400).json({ error: "Task is already completed." });
+    }
+
+    // Mark the task as completed and set the completion time to the current date and time
+    task.is_completed = true;
+    task.completedAt = new Date();
+    await taskRepository.save(task);
+
+    res.status(200).json({ message: "Task completed successfully." });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Failed to complete the task." });
+  }
+};
+
+
 export const createTask = async (req: Request, res: Response) => {
   const { user_id, category_id, location, instructions, schedule_time } =
     req.body;

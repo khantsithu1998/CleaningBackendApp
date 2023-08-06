@@ -46,9 +46,9 @@ const start = async () => {
 
     // Completed Tasks Route
     app.get("/completed-tasks", taskController.getCompletedTasks);
-    app.get("/task-completed-per-week", taskController.getTaskCompletedPerWeek)
+    app.post("/task-completed-per-week", taskController.getTaskCompletedPerWeek)
 
-    app.get("/duration-per-week", taskController.getTaskDurationPerWeek)
+    app.post("/duration-per-week", taskController.getTaskDurationPerWeek)
 
     const admin = new AdminJS(adminOptions);
 

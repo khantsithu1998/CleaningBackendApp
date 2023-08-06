@@ -29,6 +29,9 @@ export class Task {
   @Column({ default: "" })
   description: string;
 
+  @Column("text", { array: true, nullable: true })
+  photo: string[];
+
   @Column("json", { nullable: false })
   instructions: { instruction_title: string; instruction_photo: string }[];
 

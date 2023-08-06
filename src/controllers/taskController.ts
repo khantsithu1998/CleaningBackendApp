@@ -33,7 +33,7 @@ export const getTasks = async (req: Request, res: Response) => {
 };
 
 export const createTask = async (req: Request, res: Response) => {
-  const { user_id, category_id, location, instructions, schedule_time } =
+  const { user_id, category_id, location, instructions, schedule_time , photo} =
     req.body;
 
   try {
@@ -49,6 +49,9 @@ export const createTask = async (req: Request, res: Response) => {
     task.location = location;
     task.instructions = instructions;
     task.schedule_time = schedule_time;
+    task.is_completed = false; 
+    task.completedAt = null; 
+    task.photo = photo;
     const createdTask = await AppDataSource.manager.save(task);
 
     res.status(201).json(createdTask);
@@ -72,7 +75,9 @@ export const getTasksCompletedByWeek = async (req: Request, res: Response) => {
           startDate,
           endDate,
         ),
-      }
+        
+      },
+      relations: ["category", "user"],
     });
 
     res.status(200).json({ data: tasksCompletedByWeek });

@@ -6,21 +6,21 @@ import { User } from "../entity/User";
 import { Between } from "typeorm";
 
 export const getTasks = async (req: Request, res: Response) => {
-  const { page = 1, perPage = 10 } = req.body;
-  const skip = (parseInt(page) - 1) * parseInt(perPage);
+  const { page = '1', perPage = '10' } = req.query; // Ensure page and perPage are strings
+  const skip = (parseInt(page.toString()) - 1) * parseInt(perPage.toString());
 
   try {
     const [tasks, total] = await AppDataSource.manager.findAndCount(Task, {
       skip,
-      take: parseInt(perPage),
+      take: parseInt(perPage.toString()),
       relations: ["category", "user"],
     });
 
     res.status(200).json({
       data: tasks,
       total,
-      currentPage: parseInt(page),
-      totalPages: Math.ceil(total / parseInt(perPage)),
+      currentPage: parseInt(page.toString()),
+      totalPages: Math.ceil(total / parseInt(perPage.toString())),
     });
   } catch (err) {
     console.log(err);
@@ -28,9 +28,10 @@ export const getTasks = async (req: Request, res: Response) => {
   }
 };
 
+
 export const getCompletedTasks = async (req: Request, res: Response) => {
-  const { page = 1, perPage = 10 } = req.body;
-  const skip = (parseInt(page) - 1) * parseInt(perPage);
+  const { page = '1', perPage = '10' } = req.query;
+  const skip = (parseInt(page.toString()) - 1) * parseInt(perPage.toString());
 
   try {
     const [tasks, total] = await AppDataSource.manager.findAndCount(Task, {
@@ -38,15 +39,15 @@ export const getCompletedTasks = async (req: Request, res: Response) => {
         is_completed: true,
       },
       skip,
-      take: parseInt(perPage),
+      take: parseInt(perPage.toString()),
       relations: ["category", "user"],
     });
 
     res.status(200).json({
       data: tasks,
       total,
-      currentPage: parseInt(page),
-      totalPages: Math.ceil(total / parseInt(perPage)),
+      currentPage: page,
+      totalPages: Math.ceil(total / parseInt(perPage.toString())),
     });
   } catch (err) {
     console.log(err);

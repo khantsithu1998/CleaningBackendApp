@@ -6,15 +6,27 @@ import { User } from "../entity/User";
 import { Between } from "typeorm";
 
 export const getTasks = async (req: Request, res: Response) => {
-  const { page = '1', perPage = '10' } = req.query; // Ensure page and perPage are strings
+  const { page = '1', perPage = '10', startDate, endDate } = req.query; // Ensure page and perPage are strings
   const skip = (parseInt(page.toString()) - 1) * parseInt(perPage.toString());
 
   try {
-    const [tasks, total] = await AppDataSource.manager.findAndCount(Task, {
+    let queryOptions: any = {
       skip,
       take: parseInt(perPage.toString()),
       relations: ["category", "user"],
-    });
+    };
+
+    if (startDate && endDate) {
+      const startDateTime = new Date(startDate.toString());
+      const endDateTime = new Date(endDate.toString());
+      endDateTime.setDate(endDateTime.getDate() + 1); // Adjust end date to include the whole day
+
+      queryOptions.where = {
+        schedule_time: Between(startDateTime, endDateTime),
+      };
+    }
+
+    const [tasks, total] = await AppDataSource.manager.findAndCount(Task, queryOptions);
 
     res.status(200).json({
       data: tasks,
@@ -28,20 +40,29 @@ export const getTasks = async (req: Request, res: Response) => {
   }
 };
 
-
 export const getCompletedTasks = async (req: Request, res: Response) => {
-  const { page = '1', perPage = '10' } = req.query;
+  const { page = '1', perPage = '10', startDate, endDate } = req.query;
   const skip = (parseInt(page.toString()) - 1) * parseInt(perPage.toString());
 
   try {
-    const [tasks, total] = await AppDataSource.manager.findAndCount(Task, {
+    let queryOptions: any = {
       where: {
-        isCompleted: true,
+        is_completed: true,
       },
       skip,
       take: parseInt(perPage.toString()),
       relations: ["category", "user"],
-    });
+    };
+
+    if (startDate && endDate) {
+      const startDateTime = new Date(startDate.toString());
+      const endDateTime = new Date(endDate.toString());
+      endDateTime.setDate(endDateTime.getDate() + 1); // Adjust end date to include the whole day
+
+      queryOptions.where.completedAt = Between(startDateTime, endDateTime);
+    }
+
+    const [tasks, total] = await AppDataSource.manager.findAndCount(Task, queryOptions);
 
     res.status(200).json({
       data: tasks,
@@ -54,6 +75,7 @@ export const getCompletedTasks = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to fetch completed tasks." });
   }
 };
+
 
 export const getTaskCompletedPerWeek = async (req: Request, res: Response) => {
   const { weekStartDate } = req.body;

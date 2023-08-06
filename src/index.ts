@@ -42,11 +42,12 @@ const start = async () => {
 
     // Task routes
     app.get("/tasks", taskController.getTasks);
-    app.post("/tasks", taskController.createTask);
+    app.post("/tasks/create", taskController.createTask);
+    app.post("/tasks/complete", taskController.completeTask)
 
     // Completed Tasks Route
     app.get("/completed-tasks", taskController.getCompletedTasks);
-    app.post("/complete-task", taskController.completeTask)
+    
 
     app.post("/task-completed-per-week", taskController.getTaskCompletedPerWeek)
     app.post("/duration-per-week", taskController.getTaskDurationPerWeek)

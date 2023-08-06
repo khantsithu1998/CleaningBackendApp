@@ -6,7 +6,7 @@ import { User } from "../entity/User";
 import { Between } from "typeorm";
 
 export const getTasks = async (req: Request, res: Response) => {
-  const { page = '1', perPage = '10', startDate, endDate } = req.query; // Ensure page and perPage are strings
+  const { page = '1', perPage = '10', startDate = null, endDate = null } = req.query; // Ensure page and perPage are strings
   const skip = (parseInt(page.toString()) - 1) * parseInt(perPage.toString());
 
   try {
@@ -20,9 +20,10 @@ export const getTasks = async (req: Request, res: Response) => {
       const startDateTime = new Date(startDate.toString());
       const endDateTime = new Date(endDate.toString());
       endDateTime.setDate(endDateTime.getDate() + 1); // Adjust end date to include the whole day
-
+      
       queryOptions.where = {
-        schedule_time: Between(startDateTime, endDateTime),
+        startDate : startDateTime,
+        endDate : endDateTime
       };
     }
 
@@ -41,13 +42,13 @@ export const getTasks = async (req: Request, res: Response) => {
 };
 
 export const getCompletedTasks = async (req: Request, res: Response) => {
-  const { page = '1', perPage = '10', startDate, endDate } = req.query;
+  const { page = '1', perPage = '10', startDate = null, endDate = null } = req.query;
   const skip = (parseInt(page.toString()) - 1) * parseInt(perPage.toString());
 
   try {
     let queryOptions: any = {
       where: {
-        is_completed: true,
+        isCompleted: true,
       },
       skip,
       take: parseInt(perPage.toString()),

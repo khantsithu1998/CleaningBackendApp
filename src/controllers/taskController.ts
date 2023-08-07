@@ -3,10 +3,10 @@ import { AppDataSource } from "../data-source";
 import { Category } from "../entity/Category";
 import { Task } from "../entity/Task";
 import { User } from "../entity/User";
-import { Between } from "typeorm";
+import { Between, Equal, LessThan, MoreThan } from "typeorm";
 
 export const getTasks = async (req: Request, res: Response) => {
-  const { page = '1', perPage = '10', startDate = null, endDate = null } = req.query; // Ensure page and perPage are strings
+  const { page = "1", perPage = "10", date = null } = req.query;
   const skip = (parseInt(page.toString()) - 1) * parseInt(perPage.toString());
 
   try {
@@ -14,20 +14,21 @@ export const getTasks = async (req: Request, res: Response) => {
       skip,
       take: parseInt(perPage.toString()),
       relations: ["category", "user"],
+      where: {}, // Initialize the where clause
     };
 
-    if (startDate && endDate) {
-      const startDateTime = new Date(startDate.toString());
-      const endDateTime = new Date(endDate.toString());
-      endDateTime.setDate(endDateTime.getDate() + 1); // Adjust end date to include the whole day
-      
-      queryOptions.where = {
-        startDate : startDateTime,
-        endDate : endDateTime
-      };
+    if (date) {
+      const selectedDate = new Date(date.toString());
+      const nextDate = new Date(selectedDate);
+      nextDate.setDate(nextDate.getDate() + 1);
+
+      queryOptions.where.endTime = LessThan(nextDate);
+      queryOptions.where.startTime = MoreThan(selectedDate);
     }
 
-    const [tasks, total] = await AppDataSource.manager.findAndCount(Task, queryOptions);
+    const taskRepository = AppDataSource.manager.getRepository(Task);
+
+    const [tasks, total] = await taskRepository.findAndCount(queryOptions);
 
     res.status(200).json({
       data: tasks,
@@ -36,13 +37,14 @@ export const getTasks = async (req: Request, res: Response) => {
       totalPages: Math.ceil(total / parseInt(perPage.toString())),
     });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.status(500).json({ error: "Failed to fetch tasks." });
   }
 };
 
 export const getCompletedTasks = async (req: Request, res: Response) => {
-  const { page = '1', perPage = '10', startDate = null, endDate = null } = req.query;
+  const { page = "1", perPage = "10", startDate = null, endDate = null } =
+    req.query;
   const skip = (parseInt(page.toString()) - 1) * parseInt(perPage.toString());
 
   try {
@@ -60,10 +62,12 @@ export const getCompletedTasks = async (req: Request, res: Response) => {
       const endDateTime = new Date(endDate.toString());
       endDateTime.setDate(endDateTime.getDate() + 1); // Adjust end date to include the whole day
 
-      queryOptions.where.completedAt = Between(startDateTime, endDateTime);
+      queryOptions.where.endTime = Between(endDateTime, endDateTime);
     }
 
-    const [tasks, total] = await AppDataSource.manager.findAndCount(Task, queryOptions);
+    const taskRepository = AppDataSource.manager.getRepository(Task);
+
+    const [tasks, total] = await taskRepository.findAndCount(queryOptions);
 
     res.status(200).json({
       data: tasks,
@@ -76,7 +80,6 @@ export const getCompletedTasks = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to fetch completed tasks." });
   }
 };
-
 
 export const getTaskCompletedPerWeek = async (req: Request, res: Response) => {
   const { weekStartDate } = req.body;
@@ -101,10 +104,11 @@ export const getTaskCompletedPerWeek = async (req: Request, res: Response) => {
     });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "Failed to fetch completed tasks per week." });
+    res.status(500).json({
+      error: "Failed to fetch completed tasks per week.",
+    });
   }
 };
-
 
 export const getTaskDurationPerWeek = async (req: Request, res: Response) => {
   const { weekStartDate } = req.body;
@@ -143,7 +147,6 @@ export const getTaskDurationPerWeek = async (req: Request, res: Response) => {
   }
 };
 
-
 export const completeTask = async (req: Request, res: Response) => {
   const { task_id } = req.body;
 
@@ -170,7 +173,6 @@ export const completeTask = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to complete the task." });
   }
 };
-
 
 export const createTask = async (req: Request, res: Response) => {
   const { user_id, category_id, location, instructions, start_time, end_time } =

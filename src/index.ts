@@ -1,5 +1,6 @@
 import { AppDataSource } from "./data-source";
 import express from "express";
+
 import * as AdminJSTypeorm from "@adminjs/typeorm";
 import * as userController from "./controllers/userController";
 import * as categoryController from "./controllers/categoryController";
@@ -7,18 +8,31 @@ import * as taskController from "./controllers/taskController";
 import { User } from "./entity/User";
 import { Task } from "./entity/Task";
 import { Category } from "./entity/Category";
+// import * as url from 'url'
+// import path from "path";
+// const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
 const port = 3000;
 
 const start = async () => {
   try {
-    const [adminjsModule, adminjsexpressModule] = await Promise.all([
+    const [adminjsModule, adminjsexpressModule, uploadFeatureModule] = await Promise.all([
       import("adminjs"),
       import("@adminjs/express"),
+      import("@adminjs/upload")
     ]);
 
     const AdminJS = adminjsModule.default;
     const AdminJSExpress = adminjsexpressModule.default;
+    const uploadFeature = uploadFeatureModule.default;
+
+
+    const localProvider = {
+      bucket: 'public/uploads',
+      opts: {
+        baseUrl: '/uploads',
+      },
+    };
 
     AdminJS.registerAdapter({
       Resource: AdminJSTypeorm.Resource,
@@ -28,11 +42,28 @@ const start = async () => {
     await AppDataSource.initialize();
     const adminOptions = {
       resources: [
-        { resource: User , options : {
-          properties : {
-            
-          }
-        }},
+        {
+          resource: User,
+          options: {
+            properties: {
+              profilePhoto: {
+                type: "uploadFile",
+                isVisible: { edit: true, show: true },
+                mimeType: "image/jpeg,image/png",
+              },
+            },
+          },
+          features: [
+            uploadFeature({
+              properties: {
+                key: 'profilePhoto', // to this db field feature will safe S3 key
+                mimeType: 'mimeType' // this property is important because allows to have previews
+                },
+              provider: { local: localProvider },
+              validation: { mimeTypes: ['image/png', 'application/pdf', 'audio/mpeg'] },
+            }),
+          ],
+        },
         {
           resource: Task,
           options: {
@@ -43,6 +74,8 @@ const start = async () => {
       ],
     };
     const app = express();
+    app.use('/uploads', express.static('uploads'));
+    // app.use(express.static(path.join(__dirname, '../public')));
     app.use(express.json());
     // User routes
     app.get("/users", userController.getUsers);

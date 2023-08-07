@@ -15,6 +15,7 @@
    "dependencies": {
       "@adminjs/express": "^5.0.0",
       "@adminjs/typeorm": "^4.0.0",
+      "@adminjs/upload": "^3.0.0",
       "adminjs": "^6.2.0",
       "body-parser": "^1.20.2",
       "dotenv": "^16.3.1",
@@ -25,7 +26,8 @@
       "mysql": "^2.14.1",
       "reflect-metadata": "^0.1.13",
       "tslib": "^2.6.1",
-      "typeorm": "0.3.17"
+      "typeorm": "0.3.17",
+      "url": "^0.11.1"
    },
    "scripts": {
       "start": "ts-node src/index.ts",

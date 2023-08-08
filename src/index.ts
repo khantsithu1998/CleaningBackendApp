@@ -8,6 +8,7 @@ import * as taskController from "./controllers/taskController";
 import { User } from "./entity/User";
 import { Task } from "./entity/Task";
 import { Category } from "./entity/Category";
+import path from "path";
 // import * as url from 'url'
 // import path from "path";
 // const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
@@ -74,8 +75,10 @@ const start = async () => {
       ],
     };
     const app = express();
-    app.use('/uploads', express.static('uploads'));
-    // app.use(express.static(path.join(__dirname, '../public')));
+
+    app.use(express.static(path.join(__dirname, '../public')));
+    console.log("path : ", path.join(__dirname, '../public'))
+
     app.use(express.json());
     // User routes
     app.get("/users", userController.getUsers);
